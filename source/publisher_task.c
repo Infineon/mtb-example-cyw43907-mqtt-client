@@ -11,7 +11,7 @@
 *
 *
 *******************************************************************************
-* $ Copyright 2021 Cypress Semiconductor $
+* $ Copyright 2021-2023 Cypress Semiconductor $
 *******************************************************************************/
 
 #include "cyhal.h"
@@ -34,7 +34,7 @@
 * Macros
 ******************************************************************************/
 /* Interrupt priority for User Button Input. */
-#define USER_BTN_INTR_PRIORITY          (5)
+#define USER_BTN_INTR_PRIORITY          (3)
 
 /* The maximum number of times each PUBLISH in this example will be retried. */
 #define PUBLISH_RETRY_LIMIT             (10)
@@ -78,10 +78,11 @@ cy_mqtt_publish_info_t publish_info =
     .dup = false
 };
 
+/* Structure that stores the callback data for the GPIO interrupt event. */
 cyhal_gpio_callback_data_t cb_data =
 {
-        .callback     =isr_button_press,
-        .callback_arg = (void*)NULL
+    .callback = isr_button_press,
+    .callback_arg = NULL
 };
 
 /******************************************************************************
@@ -146,7 +147,7 @@ void publisher_task(void *pvParameters)
                     publish_info.payload = publisher_q_data.data;
                     publish_info.payload_len = strlen(publish_info.payload);
 
-                    printf("  Publisher: Publishing '%s' on the topic '%s'\n\n",
+                    printf("\nPublisher: Publishing '%s' on the topic '%s'\n",
                            (char *) publish_info.payload, publish_info.topic);
 
                     result = cy_mqtt_publish(mqtt_connection, &publish_info);
